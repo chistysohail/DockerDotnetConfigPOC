@@ -1,7 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
-
+//Docker build command
+//C:\Developer\DockerDotnetConfigPOC>docker build -t dotnet-console-app -f Dockerfile .
+//Docker run command
+//C:\Developer\DockerDotnetConfigPOC>docker exec -it dotnet-console-app sh
+//Check the file in the container
+//C:\Developer\DockerDotnetConfigPOC>docker exec -it 3309ce238ad9 sh
+// app # ls
+//Common........................
 namespace ConsoleApp
 {
     class Program
@@ -10,13 +17,16 @@ namespace ConsoleApp
         {
             Console.WriteLine("Reading configuration...");
 
-            // Adjust the path to the configuration file depending on the execution environment
+            // Assuming config.json is located relative to the application's base directory
             var basePath = AppContext.BaseDirectory;
-            var configFilePath = Path.Combine(basePath, "../../../Common/Configuration/config.json");
+            var configFilePath = Path.Combine(basePath, "Common/Configuration/config.json");
+            Console.WriteLine("basePaht:"+basePath+", ConfigFielPaht:"+configFilePath);
+
+            Thread.Sleep(100000);
             if (!File.Exists(configFilePath))
             {
-                // Assuming running from the project root in development
-                configFilePath = Path.Combine(basePath, "Common/Configuration/config.json");
+                // Fallback path if not found, useful for Docker environments
+                configFilePath = "/app/Common/Configuration/config.json";
             }
 
             if (File.Exists(configFilePath))
@@ -26,9 +36,13 @@ namespace ConsoleApp
                 Console.WriteLine($"Setting1: {config.AppSettings.Setting1}");
                 Console.WriteLine($"Setting2: {config.AppSettings.Setting2}");
 
-                // Adjust the data file path based on configuration
-                var dataFilePath = config.AppSettings.DataFilePath.Replace("/app/", basePath);
-                dataFilePath = dataFilePath.Replace("/", "\\"); // Windows path adjustment if necessary
+                // Adjust the data file path based on the configuration
+                var dataFilePath = config.AppSettings.DataFilePath.Replace("\\", "/");
+                if (!Path.IsPathRooted(dataFilePath))
+                {
+                    // Convert to absolute path if necessary
+                    dataFilePath = Path.Combine(basePath, dataFilePath);
+                }
 
                 if (File.Exists(dataFilePath))
                 {

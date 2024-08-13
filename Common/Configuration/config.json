@@ -2,6 +2,6 @@
   "AppSettings": {
     "Setting1": "Value1",
     "Setting2": "Value2",
-    "DataFilePath": "..\\..\\..\\Common\\Data\\data.txt"
+    "DataFilePath": "/app/Common/Data/data.txt"
   }
 }

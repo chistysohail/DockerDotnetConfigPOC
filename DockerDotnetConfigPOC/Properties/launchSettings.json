@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DockerDotnetConfigPOC": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
